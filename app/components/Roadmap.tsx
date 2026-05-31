@@ -1,5 +1,8 @@
 "use client";
+
 import { useState } from "react";
+import Image from "next/image";
+import { ChevronDown, Calendar, ArrowRight } from "lucide-react";
 
 interface Etapa {
     ano: string;
@@ -54,561 +57,157 @@ const etapas: Etapa[] = [
     },
 ];
 
-const TOTAL = etapas.length;
-
-function EtapaCard({
-    etapa,
-    index,
-    isOpen,
-    onToggle,
-}: {
-    etapa: Etapa;
-    index: number;
-    isOpen: boolean;
-    onToggle: () => void;
-}) {
-    const isRight = etapa.lado === "right";
-    const progress = ((index + 1) / TOTAL) * 100;
-
-    return (
-        <>
-            <style>{`
-        @keyframes pulseRing {
-          0%  { transform: scale(1); opacity: 0.6; }
-          70% { transform: scale(2.4); opacity: 0; }
-          100%{ transform: scale(2.4); opacity: 0; }
-        }
-        @keyframes slideDown {
-          from { opacity: 0; transform: translateY(-8px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeImg {
-          from { opacity: 0; transform: scale(1.04); }
-          to   { opacity: 1; transform: scale(1); }
-        }
-        .ring-anim {
-          animation: pulseRing 2s cubic-bezier(0.4,0,0.6,1) infinite;
-        }
-        .slide-down {
-          animation: slideDown 0.35s ease both;
-        }
-        .fade-img {
-          animation: fadeImg 0.45s ease both;
-        }
-      `}</style>
-
-            <div className="block md:hidden mb-8">
-                <div
-                    onClick={onToggle}
-                    className="relative rounded-3xl overflow-hidden cursor-pointer group"
-                    style={{
-                        background: "#fff",
-                        border: `1.5px solid ${isOpen ? "#5e2a84" : "#e9e3f0"}`,
-                        boxShadow: isOpen
-                            ? "0 20px 60px rgba(94,42,132,0.15), 0 4px 16px rgba(94,42,132,0.08)"
-                            : "0 4px 20px rgba(94,42,132,0.06)",
-                        transition: "all 0.35s cubic-bezier(0.4,0,0.2,1)",
-                    }}
-                >
-                    {/* barra de progresso e cards */}
-                    <div
-                        className="absolute top-0 left-0 h-0.5 rounded-full transition-all duration-700"
-                        style={{
-                            background: "linear-gradient(90deg, #5e2a84, #9b59b6)",
-                            width: isOpen ? "100%" : "0%",
-                        }}
-                    />
-
-                    <div className="p-6">
-                        <div className="flex items-start justify-between gap-3 mb-3">
-                            <div>
-                                <span
-                                    className="font-montserrat text-[10px] font-bold tracking-[0.28em] uppercase block mb-1"
-                                    style={{ color: "#9b59b6" }}
-                                >
-                                    {etapa.ano}
-                                </span>
-                                <h3
-                                    className="font-montserrat font-extrabold text-lg leading-tight"
-                                    style={{ color: "#1a0a2e" }}
-                                >
-                                    {etapa.titulo}
-                                </h3>
-                            </div>
-                            <div className="flex flex-col items-end gap-2 shrink-0">
-                                {etapa.atual && (
-                                    <span
-                                        className="font-montserrat text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full"
-                                        style={{
-                                            background: "rgba(94,42,132,0.1)",
-                                            color: "#5e2a84",
-                                            border: "1px solid rgba(94,42,132,0.2)",
-                                        }}
-                                    >
-                                        ATUAL
-                                    </span>
-                                )}
-                                <div
-                                    className="flex items-center justify-center w-8 h-8 rounded-full shrink-0"
-                                    style={{
-                                        background: isOpen
-                                            ? "linear-gradient(135deg, #5e2a84, #9b59b6)"
-                                            : "rgba(94,42,132,0.08)",
-                                        transition: "all 0.3s",
-                                    }}
-                                >
-                                    <svg
-                                        className="transition-transform duration-300"
-                                        style={{ transform: isOpen ? "rotate(180deg)" : "rotate(0deg)" }}
-                                        width="14"
-                                        height="14"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke={isOpen ? "#fff" : "#5e2a84"}
-                                        strokeWidth="2.5"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    >
-                                        <path d="M19 9l-7 7-7-7" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-
-                        {isOpen && (
-                            <div className="slide-down">
-                                <div
-                                    className="h-px mb-4"
-                                    style={{ background: "linear-gradient(90deg, #5e2a84 0%, rgba(94,42,132,0.1) 100%)" }}
-                                />
-                                <p
-                                    className="font-montserrat text-sm leading-relaxed mb-5"
-                                    style={{ color: "#4a3060" }}
-                                >
-                                    {etapa.detalhes}
-                                </p>
-
-                                {/* Image */}
-                                <div
-                                    className="relative rounded-2xl overflow-hidden fade-img"
-                                    style={{
-                                        height: 200,
-                                        background: "linear-gradient(135deg, #f0eaf8, #e8dff5)",
-                                    }}
-                                >
-                                    <img
-                                        src={etapa.imagem}
-                                        alt={etapa.titulo}
-                                        className="w-full h-full object-cover"
-                                        style={{ opacity: 0.95 }}
-                                    />
-                                    <div
-                                        className="absolute inset-0"
-                                        style={{
-                                            background:
-                                                "linear-gradient(to top, rgba(30,5,60,0.35) 0%, transparent 50%)",
-                                        }}
-                                    />
-                                    <div className="absolute bottom-3 left-4">
-                                        <span
-                                            className="font-montserrat text-[10px] font-bold uppercase tracking-widest text-white"
-                                            style={{ textShadow: "0 1px 4px rgba(0,0,0,0.5)" }}
-                                        >
-                                            {etapa.ano}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </div>
-
-            <div className="hidden md:grid grid-cols-[1fr_auto_1fr] gap-x-8 mb-10 items-start">
-                <div className={`${isRight ? "opacity-0 pointer-events-none" : ""}`}>
-                    {!isRight && (
-                        <div
-                            onClick={onToggle}
-                            className="cursor-pointer rounded-3xl overflow-hidden ml-auto"
-                            style={{
-                                maxWidth: 420,
-                                background: "#fff",
-                                border: `1.5px solid ${isOpen ? "#5e2a84" : "#ede8f5"}`,
-                                boxShadow: isOpen
-                                    ? "0 24px 64px rgba(94,42,132,0.16), 0 4px 20px rgba(94,42,132,0.1)"
-                                    : "0 4px 24px rgba(94,42,132,0.07)",
-                                transition: "all 0.38s cubic-bezier(0.4,0,0.2,1)",
-                                transform: isOpen ? "translateY(-3px)" : "translateY(0)",
-                            }}
-                            onMouseEnter={(e) => {
-                                if (!isOpen) {
-                                    (e.currentTarget as HTMLDivElement).style.boxShadow =
-                                        "0 12px 40px rgba(94,42,132,0.13), 0 2px 12px rgba(94,42,132,0.08)";
-                                    (e.currentTarget as HTMLDivElement).style.transform = "translateY(-2px)";
-                                }
-                            }}
-                            onMouseLeave={(e) => {
-                                if (!isOpen) {
-                                    (e.currentTarget as HTMLDivElement).style.boxShadow =
-                                        "0 4px 24px rgba(94,42,132,0.07)";
-                                    (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)";
-                                }
-                            }}
-                        >
-                            <DesktopCardInner etapa={etapa} isOpen={isOpen} />
-                        </div>
-                    )}
-                </div>
-
-                <div className="flex flex-col items-center" style={{ paddingTop: 24 }}>
-                    <div className="relative flex items-center justify-center">
-                        {etapa.atual && (
-                            <div
-                                className="ring-anim absolute w-5 h-5 rounded-full"
-                                style={{ background: "rgba(94,42,132,0.25)" }}
-                            />
-                        )}
-                        <div
-                            className="relative z-10 flex items-center justify-center rounded-full transition-all duration-300"
-                            style={{
-                                width: 20,
-                                height: 20,
-                                background: isOpen
-                                    ? "linear-gradient(135deg, #5e2a84, #9b59b6)"
-                                    : "#fff",
-                                border: `3px solid ${isOpen ? "#5e2a84" : "#c4a8e0"}`,
-                                boxShadow: isOpen ? "0 0 0 4px rgba(94,42,132,0.15)" : "none",
-                            }}
-                        >
-                            {isOpen && (
-                                <div
-                                    className="w-2 h-2 rounded-full"
-                                    style={{ background: "rgba(255,255,255,0.9)" }}
-                                />
-                            )}
-                        </div>
-                    </div>
-
-                    {index < TOTAL - 1 && (
-                        <div
-                            className="mt-2 flex-1 w-px"
-                            style={{
-                                minHeight: 60,
-                                background: `linear-gradient(to bottom, ${isOpen ? "#5e2a84" : "#d5c5ea"
-                                    } 0%, #d5c5ea 100%)`,
-                                transition: "background 0.3s",
-                            }}
-                        />
-                    )}
-                </div>
-
-                <div className={`${!isRight ? "opacity-0 pointer-events-none" : ""}`}>
-                    {isRight && (
-                        <div
-                            onClick={onToggle}
-                            className="cursor-pointer rounded-3xl overflow-hidden"
-                            style={{
-                                maxWidth: 420,
-                                background: "#fff",
-                                border: `1.5px solid ${isOpen ? "#5e2a84" : "#ede8f5"}`,
-                                boxShadow: isOpen
-                                    ? "0 24px 64px rgba(94,42,132,0.16), 0 4px 20px rgba(94,42,132,0.1)"
-                                    : "0 4px 24px rgba(94,42,132,0.07)",
-                                transition: "all 0.38s cubic-bezier(0.4,0,0.2,1)",
-                                transform: isOpen ? "translateY(-3px)" : "translateY(0)",
-                            }}
-                            onMouseEnter={(e) => {
-                                if (!isOpen) {
-                                    (e.currentTarget as HTMLDivElement).style.boxShadow =
-                                        "0 12px 40px rgba(94,42,132,0.13), 0 2px 12px rgba(94,42,132,0.08)";
-                                    (e.currentTarget as HTMLDivElement).style.transform = "translateY(-2px)";
-                                }
-                            }}
-                            onMouseLeave={(e) => {
-                                if (!isOpen) {
-                                    (e.currentTarget as HTMLDivElement).style.boxShadow =
-                                        "0 4px 24px rgba(94,42,132,0.07)";
-                                    (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)";
-                                }
-                            }}
-                        >
-                            <DesktopCardInner etapa={etapa} isOpen={isOpen} />
-                        </div>
-                    )}
-                </div>
-            </div>
-        </>
-    );
-}
-
-function DesktopCardInner({ etapa, isOpen }: { etapa: Etapa; isOpen: boolean }) {
-    return (
-        <>
-            <div
-                className="relative overflow-hidden"
-                style={{
-                    height: isOpen ? 220 : 80,
-                    transition: "height 0.45s cubic-bezier(0.4,0,0.2,1)",
-                    background: "linear-gradient(135deg, #f0eaf8, #e5d9f2)",
-                }}
-            >
-                <img
-                    src={etapa.imagem}
-                    alt={etapa.titulo}
-                    className="w-full h-full object-cover"
-                    style={{
-                        opacity: isOpen ? 0.95 : 0.55,
-                        transform: isOpen ? "scale(1)" : "scale(1.08)",
-                        transition: "all 0.5s cubic-bezier(0.4,0,0.2,1)",
-                    }}
-                />
-                <div
-                    className="absolute inset-0"
-                    style={{
-                        background: isOpen
-                            ? "linear-gradient(to top, rgba(30,5,60,0.5) 0%, rgba(30,5,60,0.1) 45%, transparent 70%)"
-                            : "linear-gradient(to top, rgba(240,234,248,0.7) 0%, rgba(240,234,248,0.2) 100%)",
-                        transition: "background 0.4s",
-                    }}
-                />
-
-                <div className="absolute top-3 left-4 right-4 flex items-center justify-between">
-                    <span
-                        className="font-montserrat text-[10px] font-bold uppercase tracking-[0.25em] px-3 py-1.5 rounded-full"
-                        style={{
-                            background: isOpen ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.75)",
-                            color: isOpen ? "#fff" : "#5e2a84",
-                            backdropFilter: "blur(8px)",
-                            border: "1px solid rgba(255,255,255,0.3)",
-                            transition: "all 0.3s",
-                        }}
-                    >
-                        {etapa.ano}
-                    </span>
-                    {etapa.atual && (
-                        <span
-                            className="font-montserrat text-[9px] font-bold uppercase tracking-widest px-2.5 py-1.5 rounded-full"
-                            style={{
-                                background: "linear-gradient(135deg, #5e2a84, #9b59b6)",
-                                color: "#fff",
-                                boxShadow: "0 2px 12px rgba(94,42,132,0.4)",
-                            }}
-                        >
-                            ATUAL
-                        </span>
-                    )}
-                </div>
-
-                {!isOpen && (
-                    <div className="absolute bottom-3 left-4 right-4">
-                        <p
-                            className="font-montserrat font-extrabold text-sm leading-tight truncate"
-                            style={{ color: "#1a0a2e" }}
-                        >
-                            {etapa.titulo}
-                        </p>
-                    </div>
-                )}
-            </div>
-
-            <div className="p-5">
-                {isOpen ? (
-                    <div className="slide-down">
-                        <h3
-                            className="font-montserrat font-extrabold text-lg leading-tight mb-3"
-                            style={{ color: "#1a0a2e" }}
-                        >
-                            {etapa.titulo}
-                        </h3>
-                        <div
-                            className="h-px mb-3"
-                            style={{ background: "linear-gradient(90deg, #5e2a84, rgba(94,42,132,0.1))" }}
-                        />
-                        <p
-                            className="font-montserrat text-sm leading-relaxed"
-                            style={{ color: "#4a3060" }}
-                        >
-                            {etapa.detalhes}
-                        </p>
-                        <div className="mt-4 flex items-center gap-2">
-                            <div
-                                className="w-2 h-2 rounded-full"
-                                style={{ background: "#9b59b6" }}
-                            />
-                            <span
-                                className="font-montserrat text-[11px] font-semibold uppercase tracking-widest"
-                                style={{ color: "#9b59b6" }}
-                            >
-                                Clique para fechar
-                            </span>
-                        </div>
-                    </div>
-                ) : (
-                    <div className="flex items-center justify-between">
-                        <span
-                            className="font-montserrat text-[11px] font-semibold uppercase tracking-widest"
-                            style={{ color: "#9b59b6" }}
-                        >
-                            Ver detalhes
-                        </span>
-                        <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="#9b59b6"
-                            strokeWidth="2.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        >
-                            <path d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </div>
-                )}
-            </div>
-        </>
-    );
-}
+const BRAND_PURPLE = "#4A2984";
+const DARK_PURPLE = "#331c5e";
+const YELLOW_ACCENT = "#FFDE1D";
 
 export default function Roadmap() {
-    const [openSteps, setOpenSteps] = useState<number[]>([]);
-
-    const toggle = (i: number) =>
-        setOpenSteps((prev) =>
-            prev.includes(i) ? prev.filter((x) => x !== i) : [...prev, i]
-        );
-
+    const [openIndex, setOpenIndex] = useState<number | null>(3);
+    const phoneNumber = '5563992095450';
+    const message = 'Olá Maria! Vim pelo site e gostaria de fazer parte da Techtins :)';
     return (
-        <>
-            <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap');
-        .font-montserrat { font-family: 'Montserrat', sans-serif; }
-      `}</style>
+        <section className="w-full bg-white py-24 px-6 md:px-12 font-montserrat relative selection:bg-yellow-brand selection:text-[#331c5e]">
+            <style jsx global>{`
+                .custom-scroll::-webkit-scrollbar {
+                    width: 8px;
+                }
+                .custom-scroll::-webkit-scrollbar-track {
+                    background: #f1f1f1;
+                }
+                .custom-scroll::-webkit-scrollbar-thumb {
+                    background: #4A2984;
+                    border-radius: 10px;
+                }
+                .custom-scroll::-webkit-scrollbar-thumb:hover {
+                    background: #331c5e;
+                }
+            `}</style>
 
-            <section
-                className="w-full font-montserrat py-20 md:py-28 px-5 md:px-12 relative overflow-hidden"
-                style={{ background: "#fff" }}
-            >
-                <div
-                    className="absolute pointer-events-none"
-                    style={{
-                        top: -120,
-                        right: -80,
-                        width: 520,
-                        height: 520,
-                        borderRadius: "50%",
-                        background:
-                            "radial-gradient(circle, rgba(94,42,132,0.07) 0%, transparent 68%)",
-                    }}
-                />
-                <div
-                    className="absolute pointer-events-none"
-                    style={{
-                        bottom: -60,
-                        left: -60,
-                        width: 380,
-                        height: 380,
-                        borderRadius: "50%",
-                        background:
-                            "radial-gradient(circle, rgba(155,89,182,0.06) 0%, transparent 68%)",
-                    }}
-                />
-
-                <div
-                    className="absolute inset-0 pointer-events-none"
-                    style={{
-                        backgroundImage:
-                            "radial-gradient(circle, rgba(94,42,132,0.04) 1px, transparent 1px)",
-                        backgroundSize: "32px 32px",
-                    }}
-                />
-
-                <div className="max-w-5xl mx-auto relative z-10">
-
-                    <div className="text-center mb-16 md:mb-20">
-                        <h1
-                            className="font-montserrat font-extrabold text-4xl md:text-6xl uppercase tracking-wide leading-none mb-5"
-                            style={{ color: "#1a0a2e" }}
-                        >
-                            Nossa Jornada
-                            <span
-                                className="block"
-                                style={{
-                                    WebkitTextStrokeWidth: "2px",
-                                    WebkitTextStrokeColor: "#5e2a84",
-                                    color: "transparent",
-                                }}
-                            >
-                                Techtins
-                            </span>
-                        </h1>
-                        <p
-                            className="font-montserrat text-sm mt-5 font-medium"
-                            style={{ color: "rgba(94,42,132,0.5)" }}
-                        >
-                            Clique em cada etapa para explorar
-                        </p>
-                    </div>
-
-                    <div
-                        className="block md:hidden mb-8 rounded-full overflow-hidden"
-                        style={{ height: 3, background: "rgba(94,42,132,0.1)" }}
-                    >
-                        <div
-                            className="h-full rounded-full transition-all duration-500"
-                            style={{
-                                background: "linear-gradient(90deg, #5e2a84, #9b59b6)",
-                                width: `${(openSteps.length / TOTAL) * 100}%`,
-                            }}
-                        />
-                    </div>
-
-                    <div className="relative">
-                        <div
-                            className="absolute hidden md:block"
-                            style={{
-                                left: "50%",
-                                top: 0,
-                                bottom: 0,
-                                width: 2,
-                                transform: "translateX(-50%)",
-                                background:
-                                    "linear-gradient(to bottom, #5e2a84 0%, rgba(94,42,132,0.15) 100%)",
-                                zIndex: 0,
-                            }}
-                        />
-
-                        {etapas.map((etapa, i) => (
-                            <EtapaCard
-                                key={i}
-                                etapa={etapa}
-                                index={i}
-                                isOpen={openSteps.includes(i)}
-                                onToggle={() => toggle(i)}
-                            />
-                        ))}
-                    </div>
-
-                    <div className="mt-12 flex items-center justify-center gap-3">
-                        {etapas.map((_, i) => (
-                            <button
-                                key={i}
-                                onClick={() => toggle(i)}
-                                className="transition-all duration-300"
-                                style={{
-                                    width: openSteps.includes(i) ? 28 : 8,
-                                    height: 8,
-                                    borderRadius: 4,
-                                    background: openSteps.includes(i)
-                                        ? "linear-gradient(90deg, #5e2a84, #9b59b6)"
-                                        : "rgba(94,42,132,0.2)",
-                                }}
-                                aria-label={`Etapa ${i + 1}`}
-                            />
-                        ))}
+            <div className="max-w-6xl mx-auto relative">
+                <div className="text-center mb-24">
+                    <p className="text-[12px] font-black tracking-[0.4em] uppercase mb-4 text-purple-brand">Linha do Tempo</p>
+                    <h2 className="text-5xl md:text-7xl font-black text-[#331c5e] tracking-tighter uppercase leading-none mb-6">
+                        NOSSA JORNADA
+                    </h2>
+                    <div className="flex items-center justify-center gap-4">
+                        <div className="h-2 w-16 rounded-full" style={{ background: YELLOW_ACCENT }} />
+                        <div className="h-2 w-8 rounded-full opacity-30" style={{ background: BRAND_PURPLE }} />
                     </div>
                 </div>
-            </section>
-        </>
+
+                <div className="absolute left-75 bottom-0 w-1.5 bg-gray-100 -translate-x-1/2 hidden md:block" />
+
+                <div className="space-y-16 relative">
+                    {etapas.map((etapa, index) => {
+                        const isOpen = openIndex === index;
+                        const isLeft = etapa.lado === "left";
+
+                        return (
+                            <div key={index} className="relative flex flex-col md:flex-row items-center gap-8 md:gap-0">
+                                <div
+                                    className={`absolute left-1/2 -translate-x-1/2 w-8 h-8 rounded-full z-20 hidden md:flex items-center justify-center border-4 border-white transition-all duration-500 ${isOpen ? "scale-125 shadow-xl" : "scale-100"
+                                        }`}
+                                    style={{
+                                        background: isOpen ? YELLOW_ACCENT : "#e5e7eb",
+                                        boxShadow: isOpen ? `0 0 20px ${YELLOW_ACCENT}66` : "none"
+                                    }}
+                                >
+                                    {etapa.atual && !isOpen && (
+                                        <div className="absolute inset-0 rounded-full animate-ping opacity-40" style={{ background: BRAND_PURPLE }} />
+                                    )}
+                                </div>
+
+                                <div className={`w-full md:w-[45%] ${isLeft ? "md:text-right" : "md:ml-auto md:text-left"}`}>
+                                    <div
+                                        onClick={() => setOpenIndex(isOpen ? null : index)}
+                                        className={`group cursor-pointer rounded-[2.5rem] border-2 transition-all duration-500 overflow-hidden ${isOpen
+                                            ? "border-purple-brandtext-purple-brand bg-white shadow-2xl"
+                                            : "border-gray-100 bg-gray-50 hover:border-gray-300"
+                                            }`}
+                                    >
+                                        <div className={`relative w-full overflow-hidden transition-all duration-500 ${isOpen ? "h-56" : "h-0"}`}>
+                                            <Image
+                                                src={etapa.imagem}
+                                                alt={etapa.titulo}
+                                                fill
+                                                className="object-cover"
+                                            />
+                                            <div className="absolute inset-0 bg-purple-900/40 mix-blend-multiply opacity-70" />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-[#331c5e] to-transparent opacity-60" />
+                                        </div>
+
+                                        <div className="p-8">
+                                            <div className={`flex items-center gap-3 mb-4 ${isLeft ? "md:justify-end" : "md:justify-start"}`}>
+                                                {etapa.atual && (
+                                                    <span className="bg-yellow-brand text-[#331c5e] text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full">
+                                                        ATUAL
+                                                    </span>
+                                                )}
+                                                <span className="text-[11px] font-black uppercase tracking-[0.2em] text-purple-brand">
+                                                    {etapa.ano}
+                                                </span>
+                                            </div>
+
+                                            <h3 className="text-2xl font-black text-[#331c5e] uppercase tracking-tight mb-4 group-hover:text-purple-brand transition-colors">
+                                                {etapa.titulo}
+                                            </h3>
+
+                                            <div className={`transition-all duration-500 overflow-hidden ${isOpen ? "max-h-96 opacity-100 mt-4" : "max-h-0 opacity-0"}`}>
+                                                <div className={`h-1.5 w-12 rounded-full mb-6 ${isLeft ? "md:ml-auto" : ""}`} style={{ background: YELLOW_ACCENT }} />
+                                                <p className="text-gray-500 font-medium leading-relaxed">
+                                                    {etapa.detalhes}
+                                                </p>
+                                            </div>
+
+                                            <div className={`mt-6 flex items-center gap-3 transition-all duration-300 ${isLeft ? "md:justify-end" : "md:justify-start"} ${isOpen ? "opacity-0" : "opacity-100"}`}>
+                                                <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 group-hover:text-purple-brand">Explorar Etapa</span>
+                                                <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-yellow-brand transition-colors">
+                                                    <ChevronDown size={14} strokeWidth={3} className={`transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="md:hidden flex items-center gap-2">
+                                    <div className="h-px w-8 bg-gray-200" />
+                                    <span className="font-black text-sm text-purple-brand">{etapa.ano}</span>
+                                    <div className="h-px w-8 bg-gray-200" />
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
+
+            <div className="max-w-4xl mx-auto mt-24 p-12 rounded-[3rem] bg-purple-brand text-purple-brand text-white relative overflow-hidden text-center shadow-2xl">
+                <svg width="100%" height="100%" className="absolute inset-0 pointer-events-none opacity-10">
+                    <defs>
+                        <pattern id="halftone-cta" x="0" y="0" width="12" height="12" patternUnits="userSpaceOnUse">
+                            <circle cx="6" cy="6" r="2" fill="white" />
+                        </pattern>
+                    </defs>
+                    <rect width="100%" height="100%" fill="url(#halftone-cta)" />
+                </svg>
+
+                <div className="relative z-10">
+                    <h3 className="text-3xl md:text-4xl font-black uppercase tracking-tighter mb-6">
+                        Faça parte da nossa história
+                    </h3>
+                    <p className="text-white/70 font-medium text-lg mb-10 max-w-2xl mx-auto">
+                        A Techtins está em constante evolução. Venha transformar o futuro tecnológico do Tocantins conosco.
+                    </p>
+                    <a
+                        href={`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`}
+                        target="_blank"
+                    >
+                        <button className="bg-yellow-brand text-[#331c5e] px-10 py-5 rounded-full font-black uppercase tracking-widest text-sm hover:scale-105 transition-all shadow-xl flex items-center gap-3 mx-auto">
+                            Quero ser membro
+                            <ArrowRight size={20} strokeWidth={3} />
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </section>
     );
 }

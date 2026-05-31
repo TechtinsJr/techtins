@@ -6,7 +6,7 @@ const services = [
     {
         icon: CodeXml,
         title: "DESENVOLVIMENTO",
-        description: "Desenvolvemos sites profissionais que realçam sua marca, serviços e ideias. Presença digital que garante visibilidade e clientes",
+        description: "Desenvolvemos sites realçam sua marca, serviços e ideias. Sistemas que centralizam e escalam o negócio com estratégia. Aplicativos criativos para a sua ideia.",
         number: "01",
     },
     {
@@ -17,7 +17,7 @@ const services = [
     },
     {
         icon: Send,
-        title: "PROCESSOS",
+        title: "Estratégia",
         description: "Organizamos o fluxo de trabalho da sua empresa para eliminar gargalos e aumentar a produtividade da sua equipe.",
         number: "03",
     },
@@ -114,7 +114,7 @@ export default function Servicos() {
 
                                     <Link href="/faleConosco">
                                         <div className="svc-cta flex items-center gap-2 mt-5 text-purple-brand font-montserrat font-bold text-sm relative z-10">
-                                            Saiba mais
+                                            Quero começar
                                             <ArrowRight size={15} />
                                         </div>
                                     </Link>
